@@ -1,7 +1,7 @@
 from flask import Flask
 from threading import Thread
 
-app = False('')
+app = Flask('')
 
 @app.route('/')
 def home():
@@ -12,4 +12,5 @@ def run():
 
     def server_on():
         t = Thread(target=run)
+
         t.start
