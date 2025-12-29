@@ -1,49 +1,83 @@
 import os
+from datetime import datetime
+from threading import Thread
+
 import discord
 from discord.ext import commands
-from datetime import datetime
-from config import *
-from myserver import keep_alive
+from flask import Flask
 
-# Start Flask server สำหรับ Render
+# =========================
+# Flask keep-alive for Render
+# =========================
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+def keep_alive():
+    t = Thread(target=run_flask)
+    t.daemon = True
+    t.start()
+
 keep_alive()
 
-# ----- Intents -----
+# =========================
+# Discord Bot setup
+# =========================
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# ----- Verify Form / View -----
-class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืนยันตัวต้นจ้าา.."):
-    # ... (โค้ด Modal เดิมของคุณ) ...
+# =========================
+# Config
+# =========================
+ROLE_ID = 1433683710212833330  # ใส่ role ที่จะให้ user
+LOG_CHANNEL_NAME = "┊📜┊「𝐢𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧」"  # ชื่อ channel log
+ANIME_COLOR = 0xFFC0CB
+AURA_COLOR = 0xFF69B4
+
+# =========================
+# Modal for verification
+# =========================
+class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืนยันตัวต้น"):
+    name = discord.ui.TextInput(label="ชื่อเล่น", placeholder="ใส่ชื่อเล่นของคุณ", required=True)
+    age = discord.ui.TextInput(label="อายุ", placeholder="เช่น 18", required=True)
+    reason = discord.ui.TextInput(label="เจอดิสนี้ทางที่ไหน", style=discord.TextStyle.long, placeholder="คุณเข้ามาในโลกนี้จากที่ไหน...", required=True)
+
     async def on_submit(self, interaction: discord.Interaction):
         try:
-            # โค้ดเดิมทั้งหมด
             user = interaction.user
             guild = interaction.guild
             role = guild.get_role(ROLE_ID)
-            if role in user.roles:
-                await interaction.response.send_message(
-                    "⚠️ คุณยืนยันไปแล้ว อย่ากดเล่นเดะโดนซัดหน้า👊",
-                    ephemeral=True
-                )
+            if not role:
+                await interaction.response.send_message("⚠️ ไม่พบ role ที่กำหนด", ephemeral=True)
                 return
-            await interaction.response.send_message(
-                "✅ ยืนยันตัวต้นเรียบร้อย...",
-                ephemeral=True
-            )
+
+            if role in user.roles:
+                await interaction.response.send_message("⚠️ คุณยืนยันไปแล้ว", ephemeral=True)
+                return
+
+            await interaction.response.send_message("✅ ยืนยันตัวต้นเรียบร้อย", ephemeral=True)
             await user.add_roles(role)
+
             fetched = await bot.fetch_user(user.id)
             avatar = user.display_avatar.url
             banner = fetched.banner.url if fetched.banner else None
-            log = discord.utils.get(guild.text_channels, name=LOG_CHANNEL_NAME)
-            if not log:
+
+            log_channel = discord.utils.get(guild.text_channels, name=LOG_CHANNEL_NAME)
+            if not log_channel:
                 return
+
             embed = discord.Embed(
                 title="📄 キャラクター覚醒",
-                description=f"```fix\n✔ {user} ได้ยืนยันตัวต้นแล้ว\n```",
+                description=f"✔ {user} ได้ยืนยันตัวต้นแล้ว",
                 color=AURA_COLOR,
                 timestamp=datetime.utcnow()
             )
@@ -53,45 +87,54 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
             embed.add_field(name="🧑‍🎤 ชื่อเล่น", value=self.name.value, inline=True)
             embed.add_field(name="🎂 อายุ", value=self.age.value, inline=True)
             embed.add_field(name="📜 เจอดิสนี้จาก..", value=self.reason.value, inline=False)
-            embed.add_field(name="✨ Server", value="```diff\n+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ ฮา ฮา\n```", inline=False)
+            embed.add_field(name="✨ Server", value="+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ", inline=False)
             embed.add_field(name="🏅 ยศที่ได้รับ", value=role.mention, inline=False)
             embed.set_footer(text="ข้อมูลของคุณ 🌸 • New Member", icon_url=avatar)
-            await log.send(embed=embed)
+
+            await log_channel.send(embed=embed)
+
         except Exception as e:
             print("❌ ERROR in Modal on_submit:", e)
 
+# =========================
+# Verify button
+# =========================
 class VerifyView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
     @discord.ui.button(label="情報を入力してください。 (Verify)", style=discord.ButtonStyle.blurple, emoji="🎀")
-    async def awaken(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def verify_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(VerifyForm())
 
-# ----- Command -----
+# =========================
+# Command
+# =========================
 @bot.command()
 async def verify(ctx):
     try:
         embed = discord.Embed(
             title="🌸 アニメ・認証システム",
             description=(
-                "```yaml\n"
                 "STATUS: Identity verification is required.\n"
                 "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
-                "```"
                 "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
                 "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
             ),
             color=ANIME_COLOR
         )
         embed.add_field(name="🎎 กฎของโลกนี้", value="<#1446834998912225410>", inline=False)
-        embed.set_footer(text="แบบฟอร์มกรอกข้อมูล • 夜桜 Verification",
-                         icon_url=ctx.guild.icon.url if ctx.guild.icon else None)
-        await ctx.send(embed=embed, view=VerifyView())
-    except Exception as e:
-        print("❌ ERROR in verify command:", e)
+        embed.set_footer(text="แบบฟอร์มกรอกข้อมูล • 夜桜 Verification", icon_url=ctx.guild.icon.url if ctx.guild.icon else None)
 
-# ----- Ready -----
+        view = VerifyView()
+        await ctx.send(embed=embed, view=view)
+        bot.add_view(view)  # add view ทันที
+    except Exception as e:
+        print("❌ ERROR sending verify:", e)
+
+# =========================
+# on_ready
+# =========================
 @bot.event
 async def on_ready():
     try:
@@ -100,5 +143,7 @@ async def on_ready():
     except Exception as e:
         print("❌ ERROR in on_ready:", e)
 
-# ----- Run Bot -----
+# =========================
+# Run Bot
+# =========================
 bot.run(os.getenv("TOKEN"))
