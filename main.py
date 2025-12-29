@@ -38,8 +38,8 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # =========================
 # Config
 # =========================
-ROLE_ID = 123456789012345678  # ใส่ role ที่จะให้ user
-LOG_CHANNEL_NAME = "verify-log"  # ชื่อ channel log
+ROLE_ID = 1433683710212833330  # ใส่ role ที่จะให้ user
+LOG_CHANNEL_NAME = "┊📜┊「𝐢𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧」"  # ชื่อ channel log
 ANIME_COLOR = 0xFFC0CB
 AURA_COLOR = 0xFF69B4
 
@@ -61,10 +61,10 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
                 return
 
             if role in user.roles:
-                await interaction.response.send_message("⚠️ คุณยืนยันไปแล้ว", ephemeral=True)
+                await interaction.response.send_message("⚠️ คุณยืนยันไปแล้วลืมหรือป่าว ถ้าลืมเดะจูนให้น้าา👊", ephemeral=True)
                 return
 
-            await interaction.response.send_message("✅ ยืนยันตัวต้นเรียบร้อย", ephemeral=True)
+            await interaction.response.send_message("✅ ยืนยันตัวต้นเรียบร้อยค้าบฟู้วววว😁", ephemeral=True)
             await user.add_roles(role)
 
             fetched = await bot.fetch_user(user.id)
@@ -125,7 +125,7 @@ async def verify(ctx):
         embed = discord.Embed(
             title="🌸 アニメ・認証システム",
             description=(
-                "STATUS: Identity verification is required.\n"
+                "STATUS: 𝗜𝗗𝗘𝗡𝗧𝗜𝗧𝗬 𝗩𝗘𝗥𝗜𝗙𝗜𝗖𝗔𝗧𝗜𝗢𝗡 𝗜𝗦 𝗥𝗘𝗤𝗨𝗜𝗥𝗘𝗗.\n"
                 "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
                 "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
                 "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
@@ -156,3 +156,4 @@ async def on_ready():
 # Run Bot
 # =========================
 bot.run(os.getenv("TOKEN"))
+
