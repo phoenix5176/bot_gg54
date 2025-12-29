@@ -88,7 +88,7 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
             embed.add_field(name="🧑‍🎤 ชื่อเล่น", value=self.name.value, inline=True)
             embed.add_field(name="🎂 อายุ", value=self.age.value, inline=True)
             embed.add_field(name="📜 เจอดิสนี้จาก..", value=self.reason.value, inline=False)
-            embed.add_field(name="✨ Server", value="+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ", inline=False)
+            embed.add_field(name="✨ Server", value="```diff\n+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ\n```" inline=False)
             embed.add_field(name="🏅 ยศที่ได้รับ", value=role.mention, inline=False)
             embed.set_footer(text="ข้อมูลของคุณ 🌸 • New Member", icon_url=avatar)
 
@@ -117,8 +117,10 @@ async def verify(ctx):
         embed = discord.Embed(
             title="🌸 アニメ・認証システム",
             description=(
+                "```yaml\n"
                 "STATUS: Identity verification is required.\n"
                 "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
+                "```"
                 "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
                 "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
             ),
@@ -148,4 +150,5 @@ async def on_ready():
 # Run Bot
 # =========================
 bot.run(os.getenv("TOKEN"))
+
 
