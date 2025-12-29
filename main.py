@@ -40,8 +40,9 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # =========================
 ROLE_ID = 1433683710212833330  # ใส่ role ที่จะให้ user
 LOG_CHANNEL_NAME = "┊📜┊「𝐢𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧」"  # ชื่อ channel log
-ANIME_COLOR = 0xFFC0CB
-AURA_COLOR = 0xFF69B4
+ANIME_COLOR = 0xff5fa2      # Sakura Pink
+AURA_COLOR = 0x8b5cf6       # Purple Aura
+SUCCESS_COLOR = 0x22c55e
 
 # =========================
 # Modal for verification
@@ -147,3 +148,4 @@ async def on_ready():
 # Run Bot
 # =========================
 bot.run(os.getenv("TOKEN"))
+
