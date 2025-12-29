@@ -88,7 +88,10 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
             embed.add_field(name="🧑‍🎤 ชื่อเล่น", value=self.name.value, inline=True)
             embed.add_field(name="🎂 อายุ", value=self.age.value, inline=True)
             embed.add_field(name="📜 เจอดิสนี้จาก..", value=self.reason.value, inline=False)
-            embed.add_field(name="✨ Server", value="```diff\n+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ\n```" inline=False)
+            embed.add_field(
+            name="✨ Server",
+            value="```diff\n+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ ฮา ฮา\n```",
+            inline=False
             embed.add_field(name="🏅 ยศที่ได้รับ", value=role.mention, inline=False)
             embed.set_footer(text="ข้อมูลของคุณ 🌸 • New Member", icon_url=avatar)
 
@@ -112,19 +115,18 @@ class VerifyView(discord.ui.View):
 # Command
 # =========================
 @bot.command()
-async def verify(ctx):
-    try:
-        embed = discord.Embed(
-            title="🌸 アニメ・認証システム",
-            description=(
-                "```yaml\n"
-                "STATUS: Identity verification is required.\n"
-                "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
-                "```"
-                "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
-                "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
-            ),
-            color=ANIME_COLOR
+sync def verify(ctx):
+    embed = discord.Embed(
+        title="🌸 アニメ・認証システム",
+        description=(
+            "```yaml\n"
+            "STATUS: Identity verification is required.\n"
+            "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
+            "```"
+            "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
+            "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
+        ),
+        color=ANIME_COLOR
         )
         embed.add_field(name="🎎 กฎของโลกนี้", value="<#1446834998912225410>", inline=False)
         embed.set_footer(text="แบบฟอร์มกรอกข้อมูล • 夜桜 Verification", icon_url=ctx.guild.icon.url if ctx.guild.icon else None)
@@ -150,5 +152,6 @@ async def on_ready():
 # Run Bot
 # =========================
 bot.run(os.getenv("TOKEN"))
+
 
 
