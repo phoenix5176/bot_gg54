@@ -38,11 +38,10 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # =========================
 # Config
 # =========================
-ROLE_ID = 1433683710212833330  # ใส่ role ที่จะให้ user
-LOG_CHANNEL_NAME = "┊📜┊「𝐢𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧」"  # ชื่อ channel log
-ANIME_COLOR = 0xff5fa2      # Sakura Pink
-AURA_COLOR = 0x8b5cf6       # Purple Aura
-SUCCESS_COLOR = 0x22c55e
+ROLE_ID = 123456789012345678  # ใส่ role ที่จะให้ user
+LOG_CHANNEL_NAME = "verify-log"  # ชื่อ channel log
+ANIME_COLOR = 0xFFC0CB
+AURA_COLOR = 0xFF69B4
 
 # =========================
 # Modal for verification
@@ -78,7 +77,7 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
 
             embed = discord.Embed(
                 title="📄 キャラクター覚醒",
-                description=f"✔ {user} ได้ยืนยันตัวต้นแล้ว",
+                description=f"✔ {user.mention} ได้ยืนยันตัวต้นแล้ว",
                 color=AURA_COLOR,
                 timestamp=datetime.utcnow()
             )
@@ -89,9 +88,15 @@ class VerifyForm(discord.ui.Modal, title="🌸 แบบฟอร์มยืน
             embed.add_field(name="🎂 อายุ", value=self.age.value, inline=True)
             embed.add_field(name="📜 เจอดิสนี้จาก..", value=self.reason.value, inline=False)
             embed.add_field(
-            name="✨ Server",
-            value="```diff\n+ ยินดีต้อนรับสมาชักใหม่\n+ ทำตามกฎด้วยละ ฮา ฮา\n```",
+    name="✨ Server",
+    value=(
+        "🌸 ยินดีต้อนรับสมาชิกใหม่\n"
+        "📜 ทำตามกฎของโลกนี้\n"
+        "🎉 สนุกและมีความสุขในโลกของเรา!"
+          ),
             inline=False
+          )
+
             embed.add_field(name="🏅 ยศที่ได้รับ", value=role.mention, inline=False)
             embed.set_footer(text="ข้อมูลของคุณ 🌸 • New Member", icon_url=avatar)
 
@@ -115,18 +120,17 @@ class VerifyView(discord.ui.View):
 # Command
 # =========================
 @bot.command()
-sync def verify(ctx):
-    embed = discord.Embed(
-        title="🌸 アニメ・認証システム",
-        description=(
-            "```yaml\n"
-            "STATUS: Identity verification is required.\n"
-            "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
-            "```"
-            "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
-            "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
-        ),
-        color=ANIME_COLOR
+async def verify(ctx):
+    try:
+        embed = discord.Embed(
+            title="🌸 アニメ・認証システム",
+            description=(
+                "STATUS: Identity verification is required.\n"
+                "WORLD: ૮₍亗𝓢𝓣𝓘𝓝𝓚𝓨亗₎ა\n"
+                "✨ กดปุ่มด้านล่างเพื่อปลดผนึกพลัง\n"
+                "⚠️ ผู้ที่ไม่ยืนยันจะไม่สามารถเข้าโลกนี้ได้"
+            ),
+            color=ANIME_COLOR
         )
         embed.add_field(name="🎎 กฎของโลกนี้", value="<#1446834998912225410>", inline=False)
         embed.set_footer(text="แบบฟอร์มกรอกข้อมูล • 夜桜 Verification", icon_url=ctx.guild.icon.url if ctx.guild.icon else None)
@@ -152,6 +156,3 @@ async def on_ready():
 # Run Bot
 # =========================
 bot.run(os.getenv("TOKEN"))
-
-
-
